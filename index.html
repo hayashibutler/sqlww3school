@@ -408,6 +408,530 @@ ket qua: co it nhat 1 trong 3 ki tu b, s, q o dau</pre>
 	SELECT * FROM Customers
 	WHERE Country IN (SELECT Country FROM Suppliers)
 </pre>
+<h2 class="body">SQL BETWEEN Operator</h2>
+<h3>Syntax</h3>
+<pre>
+	SELECT column_name(s)
+	FROM table_name
+	WHERE column_name BETWEEN value1 AND value2;
+</pre>
+<p>Vi du Number</p>
+<pre>
+	SELECT * FROM Products
+	WHERE Price BETWEEN 10 AND 20;
+
+	SELECT * FROM Products
+	WHERE Price NOT BETWEEN value1 AND value2;
+</pre>
+<pre>
+	SELECT * FROM Products
+	WHERE Price BETWEEN 10 AND 20
+	AND Category NOT IN (1,2,3)
+</pre>
+<p>Vi du Text</p>
+<p>no se so sanh thu tu ky tu A-Z	</p>
+<pre>
+	SELECT * FROM Products
+	WHERE ProductName BETWEEN 'Carnarvon Tigers' AND 'Mozzarella di Giovanni'
+	ORDER BY ProductName; // sap xep ten san pham tang dan
+
+	SELECT * FROM Products
+	WHERE ProductName NOT BETWEEN 'Carnarvon Tigers' AND 'Mozzarella di Giovanni'
+	ORDER BY ProductName;
+</pre>
+
+<p>Vi du Date</p>
+<pre>
+	SELECT * FROM Orders
+	WHERE OrderDate BETWEEN #07/01/1996# AND #07/31/1996#;
+
+	SELECT * FROM Orders
+	WHERE OrderDate BETWEEN '1996-07-01' AND '1996-07-31';
+</pre>
+<p><b>Note</b>: tuy phien ban SQL co dinh dnag ngay khac nhau </p>
+<h2 class="body">SQL Aliases</h2>
+<p>AS dung de dat ten tam thoi cho cot</p>
+<h3>Column syntax</h3>
+<pre>
+	SELECT column_name AS alias_name
+	FROM table_name;
+</pre>
+<p>Vi du</p>
+<pre>
+	SELECT CustomerID AS ID, CustomerName AS Customer
+	FROM Customers;
+</pre>
+<p>Dung dau [] de viet " "</p>
+<pre>
+	SELECT CustomerID AS ID, CustomerName AS [Contact Person]
+	FROM Customers;
+</pre>
+<p>Dung (+) de noi' cac cot voi nhau: TEXT + TEXT, NUM + NUM</p>
+<p>Dung (', ') de phan tach</p>
+<pre>
+	SELECT CustomerName, Address + ', ' + PostalCode + ' ' + City + ', ' + Country AS Address
+	FROM Customers;
+</pre>
+<p><b>Note</b>: syntax tren MySQL CONCAT()</p>
+<pre>
+	SELECT CustomerName, CONCAT(Address,', ',PostalCode',', ','City',', ',Country) AS Address
+	FROM Customers;
+</pre>
+
+<h3>table syntax</h3>
+<pre>
+	SELECT column_name(s)
+	FROM table_name AS alias_name;
+</pre>
+
+<p>Vi du</p>
+<pre>
+	SELECT o.OrderID, o.OrderDate, c.CustomerName
+	FROM Customers AS c, Orders AS o
+	WHERE c.CustomerName='Around the Horn' AND c.CustomerID=o.CustomerID;
+</pre>
+<pre>
+	SELECT Orders.OrderID, Orders.OrderDate, Customers.CustomerName
+	FROM Customers, Orders
+	WHERE Customers.CustomerName='Around the Horn' AND Customers.CustomerID=Orders.CustomerID;
+</pre>
+<h2 class="body">SQL Joins</h2>
+<pre>
+	SELECT Orders.OrderID, Customers.CustomerName, Orders.OrderDate
+	FROM Orders
+	INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID
+</pre>
+
+<pre>
+	SELECT o.OrderID, c.CustomerName, o.OrderDate
+	FROM Customers AS c
+	INNER JOIN Orders AS o
+	ON o.CustomerID=c.CustomerID;
+</pre>
+
+<ul>
+	<li>(INNER) JOIN: tra ve bang ghi co gia tri phu hop cua ca 2 bang</li>
+	<li>LEFT (OUTER) JOIN: tra full ben trai va phu hop ben phai</li>
+	<li>RIGHT (OUTER) JOIN: tra full ben phai va phu hop ben trai</li>
+	<li>FULL (OUTER) JOIN: tra ful 2 ben</li>
+</ul>
+<img src="images/joinsql.png">
+
+<h2 class="body">SQL INNER JOIN</h2>
+<h3>Syntax</h3>
+<pre>
+	SELECT column_name(s)
+	FROM table1
+	INNER JOIN table2
+	ON table1.column_name = table2.column_name
+</pre>
+<p><b>Note</b>: trung khop thi display, khong thi khong display</p>
+<pre>
+	SELECT Orders.OrderID, Customers.CustomerName, Shippers.ShipperName
+	FROM ((Orders
+	INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID)
+	INNER JOIN Shippers ON Orders.ShipperID = Shippers.ShipperID);
+</pre>
+<pre>
+	SELECT Orders.OrderID, Customers.CustomerName, Shippers.ShipperName
+	FROM Customers
+	INNER JOIN Orders ON Orders.CustomerID = Customers.CustomerID
+	INNER JOIN Shippers ON Orders.ShipperID = Shippers.ShipperID;
+</pre>
+<h2 class="body">SQL LEFT JOIN</h2>
+<pre>
+	SELECT Customers.CustomerName, Orders.OrderID
+	FROM Customers
+	LEFT JOIN Orders ON Customers.CustomerID = Orders.CustomerID
+	ORDER BY Customers.CustomerName;
+</pre>
+<h2 class="body">SQL RIGHT JOIN</h2>
+<pre>
+	SELECT Orders.OrderID, Employees.LastName, Employees.FirstName
+	FROM Orders
+	RIGHT JOIN Employees ON Orders.EmployeeID = Employees.EmployeeID
+	ORDER BY Orders.OrderID;
+</pre>
+<h2 class="body">SQL FULL JOIN </h2>
+<pre>
+	SELECT Customers.CustomerName, Orders.OrderID
+	FROM Customers
+	FULL OUTER JOIN Orders ON Customers.CustomerID=Orders.CustomerID
+	ORDER BY Customers.CustomerName;
+</pre>
+<h2 class="body">SQL Self Join</h2>
+<h3>Syntax</h3>
+<pre>
+	SELECT column_name(s)
+	FROM table1 T1, table1 T2
+	WHERE condition;
+</pre>
+<p>Vi du</p>
+<pre>
+	SELECT A.CustomerName AS CustomerName1, B.CustomerName AS CustomerName2, A.City
+	FROM Customers A, Customers B
+	WHERE Customer A &lt;&gt; Customers B
+	ORDER BY A.City;
+</pre>
+<h2 class="body">SQL UNION</h2>
+
+<h3>Syntax</h3>
+<pre>
+	SELECT column_name(s) FROM tables1
+	UNION
+	SELECT column_name(s) FROM tables2;
+</pre>
+<p>Cho phep gia tri trung lap, dung ALL</p>
+<pre>
+	SELECT column_name(s) FROM tables1
+	UNION ALL
+	SELECT column_name(s) FROM tables2;
+</pre>
+<pre>
+	SELECT City FROM Customers
+	UNION
+	SELECT City FROM Suppliers
+	ORDER BY City;
+</pre>
+<p><b>Note</b>: yeu cau column_name(s) phai giong nhau (ko yeu cau theo thu tu)</p>
+
+<pre>
+	SELECT City, Country FROM Customers
+	WHERE Country IN ('USA','Mexico')
+	UNION
+	SELECT City, Country FROM Suppliers
+	WHERE Country='Germany'
+	ORDER BY City;
+</pre>
+
+<p>Vi du khac: tao 1 cot tam thoi voi ten Type</p>
+<pre>
+	SELECT 'Customer' AS Type, ContactName, City, Country
+	FROM Customers
+	UNION
+	SELECT 'Supplier', ContactName, City, Country
+	FROM Suppliers;
+</pre>
+<h2 class="body">SQL GROUP BY</h2>
+<h3>Syntax</h3>
+<pre>
+	SELECT column_names(s)
+	FROM table_name
+	WHERE condition
+	GROUP BY column_name(s)
+	ORDER BY column_name(s);
+</pre>
+<pre>
+	SELECT COUNT(CustomerID), Country
+	FROM Sustomers
+	GROUP BY Country;
+	ORDER BY COUNT(CustomerID) DESC;
+</pre>
+<pre>
+	SELECT COUNT(Orders.OrderID) AS countOrders
+	FROM Orders
+	LEFT JOIN Shippers 0N Orders.ShipperID = Shippers.ShipperID
+	GROUP BY ShipperName
+</pre>
+<h2 class="body">SQL HAVING </h2>
+<p>WHERE dieu kien bang goc, HAVING dieu kien cua bang tam thoi</p>
+<h3>Syntax</h3>
+<pre>
+	SELECT column_name(s)
+	FROM table_name
+	WHERE condition
+	GROUP BY column_name(s)
+	HAVING condition
+	ORDER BY column_name(s);
+</pre>
+<p>Vi du</p>
+<pre>
+	SELECT COUNT(CustomerID), Country
+	FROM Customers
+	GROUP BY Country
+	HAVING COUNT(CustomerID) > 5;
+</pre>
+
+<pre>
+	SELECT Employees.LastName, COUNT(Orders.OrderID) AS NumberOfOrders
+	FROM Orders
+	INNER JOIN Employees ON Orders.EmployeeID = Employees.EmployeeID
+	GROUP BY LastName
+	HAVING COUNT(Orders.OrderID) > 10;
+</pre>
+<h2 class="body">SQL EXISTS</h2>
+<h3>Syntax</h3>
+<pre>
+	SELECT Column_name(s)
+	FROM table_name
+	WHERE EXISTS
+	(SELECT column_name FROM table_name WHERE condition) 
+</pre>
+<p>Vi du</p>
+<pre>
+	SELECT SupplierName
+	FROM Suppliers
+	WHERE EXISTS (SELECT ProductName FROM Products WHERE Products.SupplierID = Suppliers.supplierID AND Price < 20);
+</pre>
+<h2 class="body">SQL ANY and ALL </h2>
+<h3>SQL ANY</h3>
+<pre>
+	SELECT column_name(s)
+	FROM table_name
+	WHERE column_name operator ANY
+	  (SELECT column_name FROM table_name WHERE condition);
+</pre>
+<pre>
+	SELECT ProductName, ProductID
+	FROM Products
+	WHERE ProductID = ANY (SELECT ProductID FROM OrderDetails WHERE Quantity = 10);
+</pre>
+<h3>SQL ALL</h3>
+<pre>
+	SELECT ALL column_name(s)
+	FROM table_name
+	WHERE condition;
+</pre>
+<pre>
+	SELECT column_name(s)
+	FROM table_name
+	WHERE column_name operator ALL
+  	  (SELECT column_name
+  	  FROM table_name
+  	  WHERE condition);
+</pre>
+<p>Vi du</p>
+<pre>
+	SELECT ProductName
+	FROM Products
+	WHERE ProductID = ALL (SELECT ProductID FROM OrderDetails WHERE Quantity = 10);
+</pre>
+<h2 class="body">SQL SELECT INTO</h2>
+<p>Copy ra 1 newtable</p>
+<h3>Syntax</h3>
+<pre>
+	SELECT *
+	INTO newtable [IN exteraldb]
+	FROM oldtable
+	WHERE condition;
+</pre>
+<p>Vi du</p>
+<pre>
+	SELECT * 
+	INTO CustomersBackup2017 IN 'Backup.mdb'
+	FROM Customers;
+</pre>
+<pre>
+	SELECT Customers.CustomerName, Orders.OrderID
+	INTO CustomersOrderBackup2017
+	FROM Customers
+	LEFT JOIN Orders ON Customers.CustomerID = Orders.CustomerID;
+</pre>
+<p>Cach tao ra bang moi, khong co du lieu</p>
+<pre>
+	SELECT * INTO newtable
+	FROM oldtable
+	WHERE 1 = 0;
+</pre>
+<h2 class="body">SQL INSERT INTO SELECT</h2>
+<p>Copy bang 1, gop vao bang 2</p>
+<h3>Syntax</h3>
+<pre>
+	INSERT INTO table2
+	SELECT * FROM table1
+	WHERE condition;
+</pre>
+<pre>
+	INSERT INTO table2 (column1, column2, column3, ...)
+	SELECT column1, column2, column3, ...
+	FROM table1
+	WHERE condition;
+</pre>
+
+<p>Vi du</p>
+<pre>
+	INSERT INTO Customers (CustomerName, City, Country)
+	SELECT SupplierName, City, Country FROM Suppliers
+	WHERE Country='Germany';
+</pre>
+<h2 class="body">SQL CASE </h2>
+<h3>Syntax</h3>
+<pre>
+	CASE
+    	WHEN condition1 THEN result1
+    	WHEN condition2 THEN result2
+    	WHEN conditionN THEN resultN
+    	ELSE result
+	END;
+</pre>
+<p>Vi du</p>
+<pre>
+	SELECT OrderID, Quantity
+	CASE
+	  WHEN Quantity < 30 THEN 'The quantity is greater than 30'
+	  WHEN Quantity = 30 THEN 'The quantity is 30'
+	  ELSE 'The quantity is under 30'
+	END AS QuatityText
+	FROM OrderDetails;
+</pre>
+<pre>
+	SELECT CustomerName, City, Country
+	FROM Customers
+	ORDER BY
+	(CASE
+      WHEN City IS NULL THEN Country
+      ELSE City
+	END);
+</pre>
+<h2 class="body">SQL NULL</h2>
+<h3>MySQL</h3>
+<pre>
+	SELECT ProductName, UnitPrice * (UnitsInStock + IFNULL(UnitsOnOrder, 0))
+	FROM Products;
+</pre>
+<h3>SQL server</h3>
+<pre>
+	SELECT ProductName, UnitPrice * (UnitsInStock + ISNULL(UnitsOnOrder, 0))
+	FROM Products;
+</pre>
+<h2 class="body">SQL Stored Procedures</h2>
+<p>Tao 1 ten luu, de dung lai nhieu lan</p>
+<h3>Syntax</h3>
+<p>Tao</p>
+<pre>
+	CREAT PROCEDURE procedure_name
+	AS
+	sql_statement
+	GO;
+</pre>
+<p>Goi</p>
+<pre>EXEC procedure_name</pre>
+<p>Vi du</p>
+<pre>
+	CREATE PROCEDURE SelectAllCustomers
+	AS
+	SELECT * FROM Customers
+	GO;
+</pre>
+<pre>Goi: EXEC SelectCustomers;</pre>
+<pre>
+	
+	CREATE PROCEDURE SelectAllCustomers @City nvarchar(30), @PostalCode nvarchar(10)
+	AS
+	SELECT * FROM Customers WHERE City = @City AND PostalCode = @PostalCode
+	GO;
+</pre>
+<pre>Goi: EXEC SelectAllCustomers @City = 'London', @PostalCode = 'WA1 1DP';</pre>
+
+<h2 class="body">SQL Comments</h2>
+<p>dau (--) (/* */)</p>
+<p>khong hoat dong tren MS Access</p>
+<pre>
+	--Select all:
+	SELECT * FROM Customers;
+</pre>
+<h1 class="body">SQL Database</h1>
+<h2 class="body">SQL CREATE DATABASE</h2>
+<h3>Syntax</h3>
+<pre>CREATE DATABASE databasename;</pre>
+<h2 class="body">SQL DROP DATABASE</h2>
+<p>Xoa du lieu</p>
+<h3>Syntax</h3>
+<pre>DROP DATABASE databasename</pre>
+
+<h2 class="body">SQL BACKUP DATABASE</h2>
+<h3>Syntax</h3>
+<pre>
+	BACKUP DATABASE databasename
+	TO DISK = 'filepath';
+</pre>
+<p>Vi du</p>
+<pre>
+	BACKUP DATABASE testDB
+	TO DISK = 'D:\backups\testDB.bak';
+</pre>
+<p><b>Chi sao luu du lieu "thay doi" tu lan sao luu cuoi</b></p>
+<pre>
+	BACKUP DATABASE databasename
+	IO DISK = 'filepath'
+	WITH DIFFERENTIAL;
+</pre>
+<p>Vi du</p>
+<pre>
+	BACKUP DATABASE testDB
+	TO DISK = 'D:\backups\testDB.bak'
+	WITH DIFFERENTIAL;
+</pre>
+<h2 class="body">SQL CREATE TABLE</h2>
+<h3>Syntax</h3>
+<pre>
+	CREATE TABLE table_name (
+      column1 datatype,
+      column2 datatype,
+      column3 datatype,
+     ....
+	);
+</pre>
+<p>vi du</p>
+<pre>
+	CREATE TABLE Persons (
+      PersonID int,
+      LastName varchar(255),
+      FirstName varchar(255),
+      Address varchar(255),
+      City varchar(255)
+	);
+</pre>
+<b>Tao bang moi, giong cot bang cu</b>
+<pre>
+	CREATE TABLE new_table_name AS
+      SELECT column1, column2,...
+      FROM existing_table_name
+      WHERE ....;
+</pre>
+<h2 class="body">SQL DROP TABLE </h2>
+<h3>Syntax</h3>
+<pre>
+	DROP TABLE table_name;
+</pre>
+<h2 class="body">SQL ALTER TABLE</h2>
+<p>add, delete, modify column cua bang hien tai</p>
+<h3>ADD Column</h3>
+<pre>
+	ALTER TABLE table_name
+	ADD column_name datatype;
+</pre>
+<h3>DROP COLUMN</h3>
+<pre>
+	ALTER TABLE table_name
+	DROP COLUMN column_name;
+</pre>
+<h3>MODIFY COLUMN</h3>
+<pre>
+	ALTER TABLE table_name
+	MODIFY COLUMN column_name datatype;
+</pre>
+<h2 class="body">SQL Constraints</h2>
+<p>Tao rang buoc cho du lieu</p>
+<p>CREAT TABLE hoac ALTER TABLE</p>
+<pre>
+	CREATE TABLE table_name (
+      column1 datatype constraint,
+      column2 datatype constraint,
+      column3 datatype constraint,
+    ....
+	);
+</pre>
+<ul>
+	<li>NOT NULL khong co gia tri null</li>
+	<li>UNIQUE chac chan cac gia tri trong cot phai khac nhau</li>
+	<li>PRIMARY KEY la duy nhat</li>
+	<li>FOREIGN KEY ngan chan pha huy lien ket giua nhieu bang</li>
+	<li>CHECK chac chan gia tri trong cot phai thoa dieu kien</li>
+	<li>DEFAULT gia tri mac dinh neu khogn co gia tri vao</li>
+	<li>CREATE INDEX</li>
+</ul>
+
 
 </body>
 </html>
