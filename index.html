@@ -916,21 +916,256 @@ ket qua: co it nhat 1 trong 3 ki tu b, s, q o dau</pre>
 <p>CREAT TABLE hoac ALTER TABLE</p>
 <pre>
 	CREATE TABLE table_name (
-      column1 datatype constraint,
-      column2 datatype constraint,
-      column3 datatype constraint,
-    ....
+	  column1 datatype constraint,
+	  column2 datatype constraint,
+	  column3 datatype constraint,
+	  ....
 	);
 </pre>
 <ul>
 	<li>NOT NULL khong co gia tri null</li>
+	<pre>
+    CREATE TABLE Persons (
+      ID int NOT NULL,
+      LastName varchar(255) NOT NULL,
+      FirstName varchar(255) NOT NULL,
+      Age int
+    );
+	</pre>
 	<li>UNIQUE chac chan cac gia tri trong cot phai khac nhau</li>
-	<li>PRIMARY KEY la duy nhat</li>
+	<li>PRIMARY KEY khoa chinh trong bang, co the co nhieeu cot la khoa chinh, gia tri trong cot la duy nhat</li>
 	<li>FOREIGN KEY ngan chan pha huy lien ket giua nhieu bang</li>
 	<li>CHECK chac chan gia tri trong cot phai thoa dieu kien</li>
 	<li>DEFAULT gia tri mac dinh neu khogn co gia tri vao</li>
 	<li>CREATE INDEX</li>
 </ul>
+<h2 class="body">SQL UNIQUE</h2>
+<h3>CREAT TABLE</h3>
+<pre>
+	CREATE TABLE Persons (
+	  ID int NOT NULL
+	  LastName varchar(255) NOT NULL
+	  FirstName varchar(255),
+	  Age int,
+	  UNIQUE (ID) 
+	)
+</pre>
+<p>Dat ten cho rang buoc UNIQUE</p>
+<pre>
+	CREATE TABLE Persons (
+	  ID int NOT NULL
+	  LastName varchar(255) NOT NULL
+	  FirstName varchar(255),
+	  Age int,
+	  UNIQUE (ID) 
+	  CONSTRAINT UC_Person UNIQUE (ID, LastName)
+	);
+</pre>
+<h3>ALTER TABLE</h3>
+<pre>
+	ALTER TABLE Persons
+	ADD UNIQUE(ID);
+</pre>
+<pre>
+	ALTER TABLE Persons
+	ADD CONSTRAINT UC_Persons UNIQUE (ID,LastName)
+</pre>
+<h3>DROP</h3>
+<pre>
+	ALTER TABLE Persons
+	DROP INDEX US_Person;
+</pre>
+<h2 class="body">SQL PRIMARY KEY</h2>
+<pre>
+	CREATE TABLE Persons (
+	  ID int NOT NULL,
+	  LastName varchar(255) NOT NULL,
+	  FirstName varchar(255),
+	  Age int,
+	  PRIMARY KEY (ID)
+	);
+</pre>
+<p>Dat ten cho PRIMARY KEY</p>
+<h3>CREATE</h3>
+<pre>
+	DREATE TABLE Persons (
+	  ID int NOT NULL,
+	  LastName varchar(255) NOT NULL,
+	  FirstName varchar(255),
+	  Age int,
+	  CONSTRAINT PK_Persons PRIMARY KEY(ID,LastName)
+	)
+</pre>
+<p><b>Note</b>: 1 khoa chinh PRIMARY KEY, voi 2 cot ID, LastName</p>
+<h3>ALTER</h3>
+<pre>
+	ALTER TABLE Persons
+	ADD CONSTRAINT PK_Person PRIMARY KEY (ID, LastName)
+</pre>
+<h3>DROP</h3>
+<pre>
+	ALTER TABLE Persons
+	DROP PRIMARY KEY
+</pre>
+<h2 class="body">SQL FOREIGN KEY</h2>
+<p>PersonID la PRIMARY KEY trong Persons, la FOREIGN KEY trong Orders</p>
+<h3>CREATE</h3>
+<pre>
+	CREATE TABLE Orders (
+	  OrderID int NOT NULL,
+	  OrderNumber int NOT NULL,
+	  PersonID int,
+	  PRIMARY KEY (OrderID)
+	  FOREIGN KEY (PersonID) REFERENCES Persons(PersonID)
+	);
+</pre>
+<pre>
+	CREATE TABLE Orders (
+      OrderID int NOT NULL,
+      OrderNumber int NOT NULL,
+      PersonID int,
+      PRIMARY KEY (OrderID),
+      CONSTRAINT FK_PersonOrder FOREIGN KEY (PersonID)
+      REFERENCES Persons(PersonID)
+	);
+</pre>
+<h3>ALTER</h3>
+<pre>
+	ALTER TABLE Orders
+	ADD FOREEIGN KEY (PersonID) REFERENCES Persons(PersonID)
+</pre>
+<h3>DROP</h3>
+<pre>
+	ALTER TABLE Ooders
+	DROP CONSTAINT FK_PersonOrder
+</pre>
+<h2 class="body">SQL CHECK</h2>
+<h3>CREATE</h3>
+<pre>
+	CREATE TABLE Persons (
+	  ID int NOT NULL,
+	  LastName varchar(255) NOT NULL,
+	  FirstName varchar(255),
+	  Age int,
+	  CHECK (Age>=18)
+	);	
+</pre>
+<pre>
+	CREATE TABLE Persons (
+	  ID int NOT NULL,
+	  LastName varchar(255) NOT NULL,
+	  FirstName varchar(255),
+	  Age int,
+	  City varchar(255),
+	  CONSTRAINT CHK_Person(Age >=18 AND City='Sandnes')
+	)
+</pre>
+<h3>ALTER</h3>
+<pre>
+	ALTER TABLE Persons
+	ADD CONSTRAINT CHK_PersonAge CHECK (Age>=18 AND City='Sandnes');
+</pre>
+<h3>DROP</h3>
+<pre>
+	ALTER TABLE Persons
+	DROP CHECK CHK_PersonAge;
+</pre>
+<h2 class="body">SQL DEFAULT</h2>
+<h3>CREATE</h3>
+<pre>
+	CREATE TABLE Persons (
+	  ID int NOT NULL,
+	  LastName varchar(255) NOT NULL,
+	  FirstName varchar(255),
+	  Age int,
+	  City varchar(255) DEFAULT 'Sandnes'
+	);
+</pre>
+<h3>ALTER</h3>
+<pre>
+	ALTER TABLE Persons
+	ALTER City SET DEFAULT 'Sandnes'
+</pre>
+<h3>DROP</h3>
+<pre>
+	ALTER TABLE Persons
+	ALTER City DROP DEFAULT;
+</pre>
+<h2 class="body">SQL INDEX</h2>
+<p>Dung de truy xuat du lieu nhanh</p>
+<h3>CREATE</h3>
+<pre>
+	CREATE INDEX index_name
+	ON table_name (column1, column2, ...)
+</pre>
+<pre>
+	CREATE UNIQUE INDEX index_name
+	ON table_name (column1, column2, ...);
+</pre>
+<p>vi du</p>
+<pre>
+	CREATE INDEX idx_pname
+	ON Persons (LastName, FirstName);
+</pre>
+<h3>ALTER ko co. vi ko co cap nhat chi muc cho cot du lieu da co</h3>
+<h3>DROP</h3>
+<pre>
+	ALTER TABLE table_name
+	DROP INDEX index_name;
+</pre>
+<h2 class="body">SQL AUTO INCREMENT</h2>
+<pre>
+	CREATE TABLE Persons (
+      Personid int NOT NULL AUTO_INCREMENT,
+      LastName varchar(255) NOT NULL,
+      FirstName varchar(255),
+      Age int,
+      PRIMARY KEY (Personid)
+	);
+</pre>
+<p>mac dinh bat dau la 1, de bat dau tu 100</p>
+<pre>Personid int NOT NULL AUTO_INCREMENT=100</pre>
+<pre>ALTER TABLE Personid AUTO_INCREMENT=100</pre>
+<h2 class="body">SQL Dates</h2>
+<h3>Data Type MySQL</h3>
+<ul>
+	<li>DATE YYYY-MM-DD</li>
+	<li>DATETIME YYYY-MM-DD HH:MI:SS</li>
+	<li>TIMESTAMP YYYY-MM-DD HH:MI:SS</li>
+	<li>YEAR YYYY or YY</li>
+</ul>
+
+<pre>
+	SELECT *
+	FROM Orders
+	WHERE OrderDate='2008-11-11'
+</pre>
+<p><b>Note</b>: 2008-11-11 13:23:44 phai tim bang OrderDate='2008-11-11 13:23:44'. neu ko se ko dc</p>
+<h2 class="body">SQL Views</h2>
+<p>Tao 1 bang xem ao, nhu 1 bang thuc</p>
+<pre>
+	CREATE VIEW view_name AS
+	SELECT column1, column2, ...
+	FROM table_name
+	WHERE condition;
+</pre>
+<pre>
+	CREATE VIEW [Brazil Customers] AS
+	SELECT CustomerName, ContactName
+	FROM Customers
+	WHERE Country = 'Brazil';
+</pre>
+<pre>SELECT * FROM [Brazil Customers];</pre>
+<pre>DROP VIEW [Brazil Customers];</pre>
+<h2 class="body">SQL Injection</h2>
+
+
+
+
+
+
+
+
 
 
 </body>
